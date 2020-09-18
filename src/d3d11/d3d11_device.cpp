@@ -1293,7 +1293,9 @@ namespace dxvk {
     if (EmulatedInterface != __uuidof(ID3D10Device)
      && EmulatedInterface != __uuidof(ID3D10Device1)
      && EmulatedInterface != __uuidof(ID3D11Device)
-     && EmulatedInterface != __uuidof(ID3D11Device1))
+     && EmulatedInterface != __uuidof(ID3D11Device1)
+     && EmulatedInterface != __uuidof(ID3D11Device2)
+     && EmulatedInterface != __uuidof(ID3D11Device3))
       return E_INVALIDARG;
     
     UINT flId;
@@ -2378,7 +2380,29 @@ namespace dxvk {
     }
   }
   
-  
+  D2DPrivateInfo::D2DPrivateInfo(
+      D3D11DXGIDevice* pContainer,
+      D3D11Device* pDevice)
+      : m_container(pContainer), m_device(pDevice) {
+
+  }
+
+
+  ULONG STDMETHODCALLTYPE D2DPrivateInfo::AddRef() {
+      return m_device->AddRef();
+  }
+
+
+  ULONG STDMETHODCALLTYPE D2DPrivateInfo::Release() {
+      return m_device->Release();
+  }
+
+
+  HRESULT STDMETHODCALLTYPE D2DPrivateInfo::QueryInterface(
+      REFIID                  riid,
+      void** ppvObject) {
+      return m_device->QueryInterface(riid, ppvObject);
+  }
   
   
   WineDXGISwapChainFactory::WineDXGISwapChainFactory(
@@ -2505,7 +2529,8 @@ namespace dxvk {
     m_d3d11DeviceExt(this, &m_d3d11Device),
     m_d3d11Interop  (this, &m_d3d11Device),
     m_metaDevice    (this),
-    m_wineFactory   (this, &m_d3d11Device) {
+    m_wineFactory   (this, &m_d3d11Device),
+    m_d2dPrivateInfo(this, &m_d3d11Device){
 
   }
   
@@ -2530,6 +2555,16 @@ namespace dxvk {
      || riid == __uuidof(IDXGIDevice4)) {
       *ppvObject = ref(this);
       return S_OK;
+    }
+
+    if (riid == __uuidof(ID3D11PartnerDevice2)) {
+        *ppvObject = ref(this);
+        return S_OK;
+    }
+
+    if (riid == __uuidof(ID2DPrivateInfo)) {
+        *ppvObject = ref(&m_d2dPrivateInfo);
+        return S_OK;
     }
     
     if (riid == __uuidof(IDXGIVkInteropDevice)) {
