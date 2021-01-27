@@ -157,6 +157,10 @@ namespace dxvk {
       VkPhysicalDeviceProperties deviceProperties;
       m_vki->vkGetPhysicalDeviceProperties(adapters[i], &deviceProperties);
 
+      // Skip integrated GPU
+      if (deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU)
+          continue;
+
       if (deviceProperties.apiVersion < VK_MAKE_VERSION(1, 1, 0))
         Logger::warn(str::format("Skipping Vulkan 1.0 adapter: ", deviceProperties.deviceName));
       else if (filter.testAdapter(deviceProperties))
