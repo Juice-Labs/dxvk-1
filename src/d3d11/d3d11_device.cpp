@@ -1881,8 +1881,8 @@ namespace dxvk {
     const DxvkDeviceFeatures features
       = GetDeviceFeatures(adapter, featureLevel);
     
-    if (!adapter->checkFeatureSupport(features))
-      return false;
+    //if (!adapter->checkFeatureSupport(features))
+    //  return false;
     
     // TODO also check for required limits
     return true;

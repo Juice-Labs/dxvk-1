@@ -265,7 +265,7 @@ namespace dxvk {
           DxvkDeviceFeatures  enabledFeatures) {
     DxvkDeviceExtensions devExtensions;
 
-    std::array<DxvkExt*, 24> devExtensionList = {{
+    std::vector<DxvkExt*> devExtensionList = {
       &devExtensions.amdMemoryOverallocationBehaviour,
       &devExtensions.amdShaderFragmentMask,
       &devExtensions.ext4444Formats,
@@ -287,10 +287,10 @@ namespace dxvk {
       &devExtensions.khrDepthStencilResolve,
       &devExtensions.khrDrawIndirectCount,
       &devExtensions.khrDriverProperties,
-      &devExtensions.khrImageFormatList,
+      //&devExtensions.khrImageFormatList,
       &devExtensions.khrSamplerMirrorClampToEdge,
       &devExtensions.khrSwapchain,
-    }};
+    };
 
     DxvkNameSet extensionsEnabled;
 
